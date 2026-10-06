@@ -1,0 +1,17 @@
+/* Each application owns these defaults so the remote also works standalone. */
+:root {
+  --app-accent: #2455a4;
+  --app-accent-hover: #193f7c;
+  --app-ink: #18263b;
+  --app-muted: #526176;
+  --app-background: #f3f5f8;
+  --app-surface: #fff;
+  --app-border: #d9e0e9;
+  --app-radius: 1rem;
+  --app-space-md: 1rem;
+  --app-content-max-width: 76rem;
+  --bs-body-color: var(--app-ink);
+  --bs-body-bg: var(--app-background);
+  --bs-link-color: var(--app-accent);
+  --bs-link-hover-color: var(--app-accent-hover);
+}

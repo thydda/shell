@@ -1,0 +1,58 @@
+.app-header {
+  background: var(--app-ink);
+  color: #fff;
+  border-block-end: 3px solid var(--app-accent);
+}
+.app-header-inner {
+  max-inline-size: var(--app-content-max-width);
+  margin-inline: auto;
+  padding: 1rem clamp(1rem, 4vw, 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.app-brand {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+.app-brand:hover {
+  color: #fff;
+}
+.app-nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.app-nav-link {
+  color: #e1e8f3;
+  text-decoration: none;
+  padding: 0.5rem 0.85rem;
+  border-radius: 0.5rem;
+}
+.app-nav-link:hover,
+.app-nav-link.active {
+  background: #30435f;
+  color: #fff;
+}
+.app-header :focus-visible {
+  outline-color: #fff;
+}
+.app-main {
+  max-inline-size: var(--app-content-max-width);
+  margin-inline: auto;
+  padding: clamp(1.25rem, 4vw, 2.5rem) clamp(1rem, 4vw, 2rem);
+}
+.app-page-heading {
+  margin-block-end: 1.5rem;
+}
+.app-panel {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius);
+  padding: clamp(1rem, 4vw, 2rem);
+  box-shadow: 0 4px 20px rgb(24 38 59 / 4%);
+}
