@@ -1,0 +1,12 @@
+.app-button {
+  --bs-btn-bg: var(--app-accent);
+  --bs-btn-border-color: var(--app-accent);
+  --bs-btn-hover-bg: var(--app-accent-hover);
+  --bs-btn-hover-border-color: var(--app-accent-hover);
+  --bs-btn-active-bg: var(--app-accent-hover);
+  --bs-btn-active-border-color: var(--app-accent-hover);
+  min-block-size: 2.75rem;
+  padding: 0.65rem 1.1rem;
+  font-weight: 600;
+  border-radius: 0.6rem;
+}
