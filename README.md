@@ -8,6 +8,9 @@ Requires Node.js compatible with Angular 22 (22.22.3 or newer in the Node 22 lin
 
 Build the sibling library first, then install/start mfe1 on port 4201. In this repository:
 
+The local `auth-contracts` dependency must be built before installation. From
+`auth-contracts/`, run `npm ci` and `npm run check` to generate its `dist` files.
+
 ```sh
 npm ci
 npm start
@@ -23,6 +26,34 @@ The host runs at http://localhost:4200. Development remotes are configured in pu
 - src/styles.css loads Bootstrap and shared styles from src/styles/ once. Global styles do not cross custom-element Shadow DOM.
 
 Remote initialization errors are currently logged; no complete user-facing recovery flow is implemented. Review failure/fallback behavior when modifying remote loading.
+
+## Simulated authentication
+
+`/login` accepts a non-empty display name without a password. The shell provides
+`AUTH_SERVICE` with `useExisting: SimulatedAuthService`, owning a read-only user
+signal. Sign out in the header clears that signal; Movies in mfe1 observes the
+same session immediately. State is in memory and resets when the page reloads.
+Home (`/dashboard`), Movies and movie child routes require a session. Signed-out
+navigation redirects to `/login`, and signing in returns to the requested page.
+Signing out redirects to login and removes the protected screen. The shell's
+guard runs before loading remote routes; the remote guards protect its screens
+when it runs independently too. Backend authentication remains outside this demo.
+
+The sibling `auth-contracts` package owns the token and TypeScript contract.
+Both applications share it as a federation singleton with matching version
+`0.1.0`. Keep that folder next to shell and mfe1 before running `npm ci`.
+Project npm configuration uses `install-links=true` to install the local package
+inside each application's node_modules, where its Angular peer can be resolved.
+After editing the contract, run its `npm run check`, reinstall it in both applications and restart both
+development servers so their federation metadata is regenerated.
+
+To verify integration, start mfe1 and shell, open `/login` on port 4200, sign in
+as Ana, then open Movies. Both header and Movies must show Ana. Click Sign out
+while on Movies: the application must return to login and remove Movies. Try a
+direct visit to `/dashboard`, `/movies` and `/movies/edit` while signed out; all
+must redirect to login. Sign in again to return to the requested screen. Reload
+to verify the simulated session resets. Repeat on port 4201 to verify standalone
+login and protected navigation with the remote's development provider.
 
 ## Validation and local merges
 
