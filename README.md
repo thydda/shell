@@ -6,15 +6,20 @@ Angular 22 host for Library, using Native Federation. Owns navigation, layout an
 
 Requires Node.js compatible with Angular 22 (22.22.3 or newer in the Node 22 line). Use a supported Node release and npm with the committed lockfile.
 
-Build the sibling library first, then install/start mfe1 on port 4201. In this repository:
-
-The local `auth-contracts` dependency must be built before installation. From
-`auth-contracts/`, run `npm ci` and `npm run check` to generate its `dist` files.
+Install the published `@thydda` packages from GitHub Packages. Configure
+`@thydda:registry=https://npm.pkg.github.com` in `.npmrc` and authenticate with
+package read access before installing:
 
 ```sh
+npm login --scope=@thydda --registry=https://npm.pkg.github.com --auth-type=legacy
 npm ci
 npm start
 ```
+
+The shell consumes `@thydda/auth-contracts@0.1.0` and
+`@thydda/movies-cart@0.1.1`. Sibling package source folders are not required to
+install these releases. Publish and install new versions to consume library
+changes, then restart development servers to regenerate federation artifacts.
 
 The host runs at http://localhost:4200. Development remotes are configured in public/federation.manifest.json; use trusted environment-specific URLs for deployment. Start mfe1 before opening its routes through the host.
 
@@ -39,13 +44,9 @@ Signing out redirects to login and removes the protected screen. The shell's
 guard runs before loading remote routes; the remote guards protect its screens
 when it runs independently too. Backend authentication remains outside this demo.
 
-The sibling `auth-contracts` package owns the token and TypeScript contract.
-Both applications share it as a federation singleton with matching version
-`0.1.0`. Keep that folder next to shell and mfe1 before running `npm ci`.
-Project npm configuration uses `install-links=true` to install the local package
-inside each application's node_modules, where its Angular peer can be resolved.
-After editing the contract, run its `npm run check`, reinstall it in both applications and restart both
-development servers so their federation metadata is regenerated.
+The published `@thydda/auth-contracts` package owns the token and TypeScript
+contract. Both applications share it as a federation singleton with matching
+version `0.1.0` so the injected token has the same identity.
 
 To verify integration, start mfe1 and shell, open `/login` on port 4200, sign in
 as Ana, then open Movies. Both header and Movies must show Ana. Click Sign out
@@ -54,6 +55,33 @@ direct visit to `/dashboard`, `/movies` and `/movies/edit` while signed out; all
 must redirect to login. Sign in again to return to the requested screen. Reload
 to verify the simulated session resets. Repeat on port 4201 to verify standalone
 login and protected navigation with the remote's development provider.
+
+## Shared movie cart in the header
+
+The signed-in header displays `Cart (0)` and updates the count using
+`Store.selectSignal(cartSelectors.selectCount)` from `@thydda/movies-cart`.
+The shell registers `provideStore()` and
+`provideState({ name: cartFeatureKey, reducer: cartReducer })` at startup, before
+movie routes load. Movie selection in the remote dispatches the package's actions
+against that same Store. The header does not maintain a second copy of cart state.
+
+Keep compatible singleton Angular and `@ngrx/store` dependencies and matching
+movie cart contracts across shell and remote. The remote's standalone
+`app.config.ts` does not execute when hosted; the shell owns the hosted cart
+registration. Separate application tabs have independent in-memory state.
+
+The indicator is hidden while signed out. Signing out does not clear cart data;
+signing back in shows its current count. Reloading resets the cart. The indicator
+is currently text, not a checkout link or a cart details screen.
+
+Development builds enable NgRx instrumentation through `provideStoreDevtools`.
+Use the Redux DevTools browser extension to inspect actions and state changes.
+
+Unit tests register the real shared cart reducer and verify empty, added and
+removed counts plus visibility across login/logout. To verify hosted behavior,
+start shell and mfe1, sign in, select/unselect movies and check the count. Navigate
+to Home and back to verify retained selection, then reload to verify the reset.
+This browser flow is manual and is not covered by the shell unit tests.
 
 ## Validation and local merges
 

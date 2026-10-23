@@ -1,6 +1,8 @@
 import { Component, effect, inject } from '@angular/core';
 import { AUTH_SERVICE, type AuthService } from '@thydda/auth-contracts';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { cartSelectors } from '@thydda/movies-cart';
 
 @Component({
   imports: [RouterLink, RouterLinkActive, RouterOutlet],
@@ -25,6 +27,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
               ariaCurrentWhenActive="page"
               >Movies</a
             >
+            <span class="app-nav-link">Cart (<span [textContent]="cartCount()"></span>)</span>
           </nav>
         }
         <div class="d-flex flex-wrap align-items-center gap-2">
@@ -49,8 +52,10 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
   `,
 })
 export class App {
+  private readonly store = inject(Store);
   protected readonly auth: AuthService = inject<AuthService>(AUTH_SERVICE);
   private readonly router = inject(Router);
+  protected readonly cartCount = this.store.selectSignal(cartSelectors.selectCount);
 
   constructor() {
     effect(() => {
